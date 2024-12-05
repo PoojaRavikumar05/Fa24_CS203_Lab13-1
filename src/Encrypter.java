@@ -34,6 +34,33 @@ public class Encrypter {
      */
     public void encrypt(String inputFilePath, String encryptedFilePath) throws Exception {
         //TODO: Call the read method, encrypt the file contents, and then write to new file
+    	String content = readFile(inputFilePath);             
+        String encryptedMessage = "";
+
+        for (int i = 0; i < content.length(); i++) 
+        {
+            char c = content.charAt(i);
+            if (Character.isLetter(c))    //checks i pointing at char c is letter or not
+            {
+            	char base;
+            	if (Character.isLowerCase(c))    //if letter, whether lowercase or not
+            	{
+            	    base = 'a';
+            	} 
+            	else                              //if uppercase
+            	{
+            	    base = 'A';
+            	}
+                encryptedMessage += (char) ((c - base + shift) % 26 + base); // +shift for encryption and 26 is to check if the letters are still within 26 alphabets count.
+            } 
+            else 
+            {
+                encryptedMessage += c;        //if not a letter
+            }
+        }
+
+        writeFile(encryptedMessage, encryptedFilePath);
+    
     }
 
     /**
@@ -45,6 +72,32 @@ public class Encrypter {
      */
     public void decrypt(String messageFilePath, String decryptedFilePath) throws Exception {
         //TODO: Call the read method, decrypt the file contents, and then write to new file
+    	String content = readFile(messageFilePath);
+        String decryptedMessage = "";
+
+        for (int i = 0; i < content.length(); i++) 
+        {
+            char c = content.charAt(i);
+            if (Character.isLetter(c)) 
+            {
+            	char base;
+            	if (Character.isLowerCase(c)) 
+            	{
+            	    base = 'a';
+            	} 
+            	else 
+            	{
+            	    base = 'A';
+            	}
+                decryptedMessage += (char) ((c - base - shift + 26) % 26 + base);  //-shift for decryption
+            }
+            else 
+            {
+                decryptedMessage += c;
+            }
+        }
+
+        writeFile(decryptedMessage, decryptedFilePath);
     }
 
     /**
@@ -57,7 +110,17 @@ public class Encrypter {
     private static String readFile(String filePath) throws Exception {
         String message = "";
         //TODO: Read file from filePath
-        return message;
+        File file = new File(filePath);
+        Scanner scanner = new Scanner(file);
+
+        while (scanner.hasNextLine()) 
+        {
+            message += scanner.nextLine() + "\n";  //reading line by line
+        }
+        scanner.close();
+
+        return message.trim();
+        //return message;
     }
 
     /**
@@ -68,6 +131,16 @@ public class Encrypter {
      */
     private static void writeFile(String data, String filePath) {
         //TODO: Write to filePath
+    	try
+   	 {
+            FileWriter writer = new FileWriter(filePath);
+            writer.write(data);
+            writer.close();
+        } 
+   	 catch (Exception e) 
+   	 {
+            e.printStackTrace();
+        }
     }
 
     /**
